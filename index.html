@@ -148,8 +148,12 @@
         #noBtn {
             background: linear-gradient(135deg, #e0e0e0 0%, #c0c0c0 100%);
             color: #666;
-            position: absolute;
+            position: relative;
             transition: all 0.2s ease;
+        }
+
+        #noBtn.moving {
+            position: fixed;
         }
 
         #noBtn:hover {
@@ -232,7 +236,7 @@
             <h1>Sofia, can you be my Valentine?</h1>
             <div class="buttons">
                 <button id="yesBtn" onclick="sayYes()">Yes! 💕</button>
-                <button id="noBtn" onmouseover="moveButton()" onclick="moveButton()">No</button>
+                <button id="noBtn">No</button>
             </div>
         </div>
 
@@ -261,38 +265,49 @@
         // Move the No button randomly
         function moveButton() {
             const noBtn = document.getElementById('noBtn');
-            const container = document.querySelector('.buttons');
-            
-            const containerRect = container.getBoundingClientRect();
+            noBtn.classList.add('moving');
+
             const btnRect = noBtn.getBoundingClientRect();
-            
-            // Random position within the viewport
+
+            // Random position within safe viewport area
             const maxX = window.innerWidth - btnRect.width - 100;
             const maxY = window.innerHeight - btnRect.height - 100;
-            
-            const randomX = Math.random() * maxX;
-            const randomY = Math.random() * maxY;
-            
-            noBtn.style.position = 'fixed';
+
+            const randomX = Math.max(100, Math.random() * maxX);
+            const randomY = Math.max(100, Math.random() * maxY);
+
             noBtn.style.left = randomX + 'px';
             noBtn.style.top = randomY + 'px';
-            
+
             // Make Yes button bigger
             const yesBtn = document.getElementById('yesBtn');
             const currentSize = parseFloat(window.getComputedStyle(yesBtn).fontSize);
             yesBtn.style.fontSize = (currentSize + 2) + 'px';
-            yesBtn.style.padding = (parseInt(yesBtn.style.padding) || 20) + 2 + 'px ' + 
-                                   (parseInt(yesBtn.style.padding) || 50) + 5 + 'px';
+
+            const currentPadding = window.getComputedStyle(yesBtn).padding.split(' ')[0];
+            const paddingValue = parseInt(currentPadding) || 20;
+            yesBtn.style.padding = (paddingValue + 2) + 'px ' + (paddingValue * 2.5 + 5) + 'px';
         }
+
+        // Add event listeners to No button
+        document.addEventListener('DOMContentLoaded', function() {
+            const noBtn = document.getElementById('noBtn');
+
+            noBtn.addEventListener('mouseover', moveButton);
+            noBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                moveButton();
+            });
+        });
 
         // Success animation
         function sayYes() {
             document.getElementById('question').style.display = 'none';
             document.getElementById('success').style.display = 'block';
-            
+
             // Create confetti
             createConfetti();
-            
+
             // Add sparkles
             createSparkles();
         }
@@ -307,7 +322,7 @@
                 confetti.style.animationDelay = Math.random() * 2 + 's';
                 confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
                 document.body.appendChild(confetti);
-                
+
                 setTimeout(() => confetti.remove(), 5000);
             }
         }
