@@ -152,12 +152,12 @@
             transition: all 0.2s ease;
         }
 
-        #noBtn.moving {
-            position: fixed;
-        }
-
         #noBtn:hover {
             transform: scale(1.05);
+        }
+
+        #noBtn.moving {
+            position: fixed;
         }
 
         /* Success message */
@@ -269,12 +269,17 @@
 
             const btnRect = noBtn.getBoundingClientRect();
 
-            // Random position within safe viewport area
-            const maxX = window.innerWidth - btnRect.width - 100;
-            const maxY = window.innerHeight - btnRect.height - 100;
+            // Keep button in central 70% of screen (avoid edges)
+            const marginX = window.innerWidth * 0.15;
+            const marginY = window.innerHeight * 0.15;
 
-            const randomX = Math.max(100, Math.random() * maxX);
-            const randomY = Math.max(100, Math.random() * maxY);
+            const minX = marginX;
+            const maxX = window.innerWidth - btnRect.width - marginX;
+            const minY = marginY;
+            const maxY = window.innerHeight - btnRect.height - marginY;
+
+            const randomX = minX + Math.random() * (maxX - minX);
+            const randomY = minY + Math.random() * (maxY - minY);
 
             noBtn.style.left = randomX + 'px';
             noBtn.style.top = randomY + 'px';
