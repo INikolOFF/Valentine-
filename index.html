@@ -284,14 +284,16 @@
             noBtn.style.left = randomX + 'px';
             noBtn.style.top = randomY + 'px';
 
-            // Make Yes button bigger
+            // Make Yes button BIGGER - no limits!
             const yesBtn = document.getElementById('yesBtn');
-            const currentSize = parseFloat(window.getComputedStyle(yesBtn).fontSize);
-            yesBtn.style.fontSize = (currentSize + 2) + 'px';
+            const currentSize = parseFloat(window.getComputedStyle(yesBtn).fontSize) || 24;
+            const currentPaddingTop = parseFloat(window.getComputedStyle(yesBtn).paddingTop) || 20;
+            const currentPaddingLeft = parseFloat(window.getComputedStyle(yesBtn).paddingLeft) || 50;
 
-            const currentPadding = window.getComputedStyle(yesBtn).padding.split(' ')[0];
-            const paddingValue = parseInt(currentPadding) || 20;
-            yesBtn.style.padding = (paddingValue + 2) + 'px ' + (paddingValue * 2.5 + 5) + 'px';
+            // Grow font size by 3px each time
+            yesBtn.style.fontSize = (currentSize + 3) + 'px';
+            // Grow padding proportionally
+            yesBtn.style.padding = (currentPaddingTop + 3) + 'px ' + (currentPaddingLeft + 6) + 'px';
         }
 
         // Add event listeners to No button
