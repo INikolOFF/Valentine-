@@ -10,6 +10,7 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-touch-callout: none;
         }
 
         body {
@@ -113,6 +114,49 @@
             animation: containerGlow 3s ease-in-out infinite;
         }
 
+        /* Mobile responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 40px 30px;
+                border-radius: 30px;
+            }
+
+            h1 {
+                font-size: 36px;
+            }
+
+            .emoji {
+                font-size: 70px;
+            }
+
+            button {
+                font-size: 20px;
+                padding: 18px 40px;
+            }
+
+            .buttons {
+                gap: 20px;
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .success h2 {
+                font-size: 48px;
+            }
+
+            .success .emoji {
+                font-size: 90px;
+            }
+
+            .success p {
+                font-size: 20px;
+            }
+
+            .corner-heart {
+                font-size: 30px;
+            }
+        }
+
         @keyframes containerGlow {
             0%, 100% {
                 box-shadow:
@@ -195,6 +239,9 @@
             letter-spacing: 2px;
             position: relative;
             overflow: hidden;
+            -webkit-user-select: none;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
         }
 
         button::before {
@@ -399,7 +446,10 @@
         // Create floating hearts
         function createHearts() {
             const container = document.getElementById('hearts-container');
-            for (let i = 0; i < 20; i++) {
+            const isMobile = window.innerWidth < 768;
+            const heartCount = isMobile ? 10 : 20; // Fewer hearts on mobile
+
+            for (let i = 0; i < heartCount; i++) {
                 const heart = document.createElement('div');
                 heart.className = 'heart';
                 heart.style.left = Math.random() * 100 + '%';
@@ -412,7 +462,10 @@
         // Create sparkles
         function createSparkles() {
             const container = document.getElementById('sparkles-container');
-            for (let i = 0; i < 50; i++) {
+            const isMobile = window.innerWidth < 768;
+            const sparkleCount = isMobile ? 25 : 50; // Fewer sparkles on mobile
+
+            for (let i = 0; i < sparkleCount; i++) {
                 const sparkle = document.createElement('div');
                 sparkle.className = 'sparkle';
                 sparkle.style.left = Math.random() * 100 + '%';
@@ -429,9 +482,12 @@
 
             const btnRect = noBtn.getBoundingClientRect();
 
-            // Keep button in central 70% of screen (avoid edges)
-            const marginX = window.innerWidth * 0.15;
-            const marginY = window.innerHeight * 0.15;
+            // Keep button in central area (larger margins on mobile)
+            const isMobile = window.innerWidth < 768;
+            const marginPercent = isMobile ? 0.1 : 0.15;
+
+            const marginX = window.innerWidth * marginPercent;
+            const marginY = window.innerHeight * marginPercent;
 
             const minX = marginX;
             const maxX = window.innerWidth - btnRect.width - marginX;
@@ -446,25 +502,36 @@
 
             // Make Yes button BIGGER - no limits!
             const yesBtn = document.getElementById('yesBtn');
-            const currentSize = parseFloat(window.getComputedStyle(yesBtn).fontSize) || 28;
-            const currentPaddingTop = parseFloat(window.getComputedStyle(yesBtn).paddingTop) || 25;
-            const currentPaddingLeft = parseFloat(window.getComputedStyle(yesBtn).paddingLeft) || 60;
+            const currentSize = parseFloat(window.getComputedStyle(yesBtn).fontSize) || (isMobile ? 20 : 28);
+            const currentPaddingTop = parseFloat(window.getComputedStyle(yesBtn).paddingTop) || (isMobile ? 18 : 25);
+            const currentPaddingLeft = parseFloat(window.getComputedStyle(yesBtn).paddingLeft) || (isMobile ? 40 : 60);
 
-            // Grow font size by 4px each time
-            yesBtn.style.fontSize = (currentSize + 4) + 'px';
+            // Grow font size (smaller increments on mobile)
+            const growthSize = isMobile ? 3 : 4;
+            yesBtn.style.fontSize = (currentSize + growthSize) + 'px';
             // Grow padding proportionally
-            yesBtn.style.padding = (currentPaddingTop + 4) + 'px ' + (currentPaddingLeft + 8) + 'px';
+            yesBtn.style.padding = (currentPaddingTop + growthSize) + 'px ' + (currentPaddingLeft + (growthSize * 2)) + 'px';
         }
 
         // Add event listeners to No button
         document.addEventListener('DOMContentLoaded', function() {
             const noBtn = document.getElementById('noBtn');
 
+            // Mouse events for desktop
             noBtn.addEventListener('mouseover', moveButton);
             noBtn.addEventListener('click', function(e) {
                 e.preventDefault();
                 moveButton();
             });
+
+            // Touch events for mobile (iPhone/iPad/Android)
+            noBtn.addEventListener('touchstart', function(e) {
+                e.preventDefault();
+                moveButton();
+            });
+
+            // Also trigger on mouseenter for better desktop experience
+            noBtn.addEventListener('mouseenter', moveButton);
         });
 
         // Success animation
@@ -478,7 +545,10 @@
 
         function createConfetti() {
             const colors = ['#ff6b9d', '#ffd700', '#ff1493', '#ff69b4', '#ff85c1', '#ffb6c1'];
-            for (let i = 0; i < 150; i++) {
+            const isMobile = window.innerWidth < 768;
+            const confettiCount = isMobile ? 75 : 150; // Half confetti on mobile
+
+            for (let i = 0; i < confettiCount; i++) {
                 const confetti = document.createElement('div');
                 confetti.className = 'confetti';
                 confetti.style.left = Math.random() * 100 + '%';
